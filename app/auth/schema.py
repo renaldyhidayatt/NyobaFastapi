@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class SignUpModel(BaseModel):
     name: str
     email: str
-    password: str
+    password: Optional[str]
     is_staff: Optional[bool]
     is_active: Optional[bool]
 
