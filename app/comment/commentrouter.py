@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-
+from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
 
 from comment.schema import CommentBase
@@ -16,19 +16,34 @@ def comment_list(db: Session = Depends(get_db)):
 
 
 @router.post("/{id}")
-def comment_create(id: int, request: CommentBase, db: Session = Depends(get_db)):
-    return CommentService.create_comment(id, request=request, db=db)
+def comment_create(
+    id: int,
+    request: CommentBase,
+    db: Session = Depends(get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    return CommentService.create_comment(
+        id, request=request, db=db, Authorize=Authorize
+    )
 
 
 @router.put("/{idBlog}/{idComment}")
 def comment_update(
-    idBlog: int, idComment: int, request: CommentBase, db: Session = Depends(get_db)
+    idBlog: int,
+    idComment: int,
+    request: CommentBase,
+    db: Session = Depends(get_db),
+    Authorize: AuthJWT = Depends(),
 ):
     return CommentService.update_comment(
-        idBlog=idBlog, idComment=idComment, request=request, db=db
+        idBlog=idBlog, idComment=idComment, request=request, db=db, Authorize=Authorize
     )
 
 
 @router.delete("/{id}")
-def comment_delete(id: int, db: Session = Depends(get_db)):
-    return CommentService.delete_comment(id, db)
+def comment_delete(
+    id: int,
+    db: Session = Depends(get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    return CommentService.delete_comment(id, db, Authorize)

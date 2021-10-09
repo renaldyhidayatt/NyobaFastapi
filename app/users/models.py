@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from config.database import Base
+from comment.models import Comment
 
 
 class User(Base):

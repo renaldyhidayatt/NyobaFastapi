@@ -9,3 +9,5 @@ class Comment(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String)
     blog_id = relationship("Blog", backref="comment")
+
+    user_id = Column(Integer, ForeignKey("user.id"))
