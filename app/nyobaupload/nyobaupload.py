@@ -1,12 +1,11 @@
 from fastapi import UploadFile, APIRouter, File
 import os
-from os import getcwd, remove
 from starlette.responses import FileResponse, JSONResponse
 
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
-path_folder = "/home/holyraven/Projects/python/fastapi/nyobafastapi"
+# path_folder = "/home/holyraven/Projects/python/fastapi/nyobafastapi"
 
 
 @router.post("/")
@@ -36,7 +35,7 @@ def get_file(name_file: str):
 def delete_file(name_file: str):
     testing_root = os.path.abspath(os.curdir)
     try:
-        remove(testing_root + "/media/" + name_file)
+        os.remove(testing_root + "/media/" + name_file)
         return JSONResponse(content={"removed": True}, status_code=200)
     except FileNotFoundError:
         return JSONResponse(

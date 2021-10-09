@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
 
+from comment.schema import CommentBase
+
 from .commentservice import CommentService
 from config.get_db import get_db
 
@@ -13,6 +15,20 @@ def comment_list(db: Session = Depends(get_db)):
     return CommentService.get_all(db)
 
 
-@router.post("/")
-def comment_create(description, db: Session = Depends(get_db)):
-    return CommentService.create_comment(description=description, db=db)
+@router.post("/{id}")
+def comment_create(id: int, request: CommentBase, db: Session = Depends(get_db)):
+    return CommentService.create_comment(id, request=request, db=db)
+
+
+@router.put("/{idBlog}/{idComment}")
+def comment_update(
+    idBlog: int, idComment: int, request: CommentBase, db: Session = Depends(get_db)
+):
+    return CommentService.update_comment(
+        idBlog=idBlog, idComment=idComment, request=request, db=db
+    )
+
+
+@router.delete("/{id}")
+def comment_delete(id: int, db: Session = Depends(get_db)):
+    return CommentService.delete_comment(id, db)

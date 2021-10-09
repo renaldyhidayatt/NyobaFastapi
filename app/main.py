@@ -12,6 +12,8 @@ from auth import authrouter, schema
 
 app = FastAPI()
 
+
+
 blogmodels.Base.metadata.create_all(bind=engine)
 commentmodels.Base.metadata.create_all(bind=engine)
 usersmodels.Base.metadata.create_all(bind=engine)
@@ -22,7 +24,7 @@ def get_config():
     return schema.Settings()
 
 
-app.mount("/media", StaticFiles(directory="media"))
+# app.mount("/media", StaticFiles(directory="media"))
 
 
 @app.get("/")
@@ -33,4 +35,4 @@ def hello():
 app.include_router(blogrouter.router)
 app.include_router(commentrouter.router)
 app.include_router(authrouter.router)
-app.include_router(nyobaupload.router)
+# app.include_router(nyobaupload.router)

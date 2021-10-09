@@ -1,40 +1,38 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
+from fastapi_jwt_auth.auth_jwt import AuthJWT
 from sqlalchemy.orm import Session
-
-from blog.schemas import BlogUpdateComment
-
-from .blogservice import BlogService
 from config.get_db import get_db
+from .blogservice import BlogService
+from .schema import BlogBase
 
-
-router = APIRouter(prefix="/blog", tags=["blogs"])
+router = APIRouter(prefix="/blog", tags=["Blogs"])
 
 
 @router.get("/")
-def blog_list(db: Session = Depends(get_db)):
+def all(db: Session = Depends(get_db)):
     return BlogService.get_all(db)
 
 
-@router.post("/")
-def blog_create(
-    title: str,
-    description: str,
-    published: bool,
-    db: Session = Depends(get_db),
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+)
+def create(
+    request: BlogBase, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()
 ):
-    return BlogService.create_blog(
-        title=title,
-        description=description,
-        published=published,
-        db=db,
-    )
+    return BlogService.create(request, db, Authorize)
 
 
-@router.get("/{id}", status_code=200)
-def blog_byid(id: int, db: Session = Depends(get_db)):
-    return BlogService.show_blog(id=id, db=db)
+@router.put("/{id}")
+def update(
+    id: int,
+    request: BlogBase,
+    db: Session = Depends(get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    return BlogService.update_blog(id, request, db, Authorize)
 
 
-@router.post("/{id}/comment")
-def blog_comment(id: int, description: str, db: Session = Depends(get_db)):
-    return BlogService.show_comment(id=id, description=description, db=db)
+@router.delete("/{id}")
+def delete(id: int, db: Session = Depends(get_db), Authorize: AuthJWT = Depends()):
+    return BlogService.delete_blog(id, db, Authorize)
